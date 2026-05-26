@@ -3,9 +3,133 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>ComissionPay — Two-Mode Commission Calculator</title>
+    <meta name="description" content="Compare payout platforms and model multi-step commission routes with a static fintech calculator app.">
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    
+    <div class="app-shell">
+        <div class="ambient ambient--one"></div>
+        <div class="ambient ambient--two"></div>
+
+        <header class="hero card">
+            <div class="hero__content">
+                <p class="eyebrow">ComissionPay</p>
+                <h1>Two-Mode Commission Calculator</h1>
+                <p class="hero__lede">
+                    Switch between instant platform benchmarking and multi-hop payout route modeling — all from a single static browser app.
+                </p>
+            </div>
+            <div class="hero__stats">
+                <div class="stat-pill">
+                    <span>8</span>
+                    <small>preset platforms</small>
+                </div>
+                <div class="stat-pill">
+                    <span>11</span>
+                    <small>weighted metrics</small>
+                </div>
+            </div>
+        </header>
+
+        <nav class="mode-switcher card" aria-label="Calculator modes">
+            <div class="mode-switcher__track" id="mode-switcher-track" style="--mode-index: 0;">
+                <span class="mode-switcher__indicator" aria-hidden="true"></span>
+                <button class="mode-switcher__button is-active" type="button" data-mode="mode1" aria-selected="true" aria-controls="mode1-view">
+                    <span>Mode 1</span>
+                    <small>Weighted Analyzer</small>
+                </button>
+                <button class="mode-switcher__button" type="button" data-mode="mode2" aria-selected="false" aria-controls="mode2-view">
+                    <span>Mode 2</span>
+                    <small>Transaction Flow</small>
+                </button>
+            </div>
+        </nav>
+
+        <main>
+            <section class="mode-view is-active" id="mode1-view" aria-labelledby="mode1-heading">
+                <div class="section-heading">
+                    <div>
+                        <p class="eyebrow">Mode 1</p>
+                        <h2 id="mode1-heading">Weighted Commission Analyzer</h2>
+                    </div>
+                    <p>Compare payout providers using live weights, shared transaction assumptions, and cost-focused scoring.</p>
+                </div>
+                <div class="mode-grid">
+                    <div class="stack">
+                        <section class="card" id="mode1-config"></section>
+                        <section class="card" id="mode1-weights"></section>
+                    </div>
+                    <div class="stack">
+                        <section class="card" id="mode1-platforms"></section>
+                        <section class="card" id="mode1-results"></section>
+                    </div>
+                </div>
+            </section>
+
+            <section class="mode-view" id="mode2-view" aria-labelledby="mode2-heading">
+                <div class="section-heading">
+                    <div>
+                        <p class="eyebrow">Mode 2</p>
+                        <h2 id="mode2-heading">Interactive Transaction Flow Builder</h2>
+                    </div>
+                    <p>Model chained deductions step by step, compare routes side by side, and surface the costliest hop instantly.</p>
+                </div>
+                <div class="mode-grid mode-grid--expanded">
+                    <div class="stack">
+                        <section class="card" id="mode2-config"></section>
+                        <section class="card" id="mode2-weights"></section>
+                        <section class="card" id="mode2-routes"></section>
+                    </div>
+                    <div class="stack">
+                        <section class="card" id="mode2-results"></section>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="js/data.js"></script>
+    <script src="js/mode1.js"></script>
+    <script src="js/mode2.js"></script>
+    <script>
+        (function () {
+            const switcherTrack = document.getElementById('mode-switcher-track');
+            const buttons = Array.from(document.querySelectorAll('.mode-switcher__button'));
+            const views = {
+                mode1: document.getElementById('mode1-view'),
+                mode2: document.getElementById('mode2-view')
+            };
+
+            function setMode(mode) {
+                const index = mode === 'mode2' ? 1 : 0;
+                switcherTrack.style.setProperty('--mode-index', index);
+
+                buttons.forEach((button) => {
+                    const active = button.dataset.mode === mode;
+                    button.classList.toggle('is-active', active);
+                    button.setAttribute('aria-selected', String(active));
+                });
+
+                Object.entries(views).forEach(([key, view]) => {
+                    view.classList.toggle('is-active', key === mode);
+                });
+            }
+
+            buttons.forEach((button) => {
+                button.addEventListener('click', () => setMode(button.dataset.mode));
+            });
+
+            document.addEventListener('DOMContentLoaded', () => {
+                if (window.ComissionPayMode1 && typeof window.ComissionPayMode1.init === 'function') {
+                    window.ComissionPayMode1.init();
+                }
+                if (window.ComissionPayMode2 && typeof window.ComissionPayMode2.init === 'function') {
+                    window.ComissionPayMode2.init();
+                }
+                setMode('mode1');
+            });
+        }());
+    </script>
 </body>
 </html>
